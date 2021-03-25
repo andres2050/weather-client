@@ -62,7 +62,7 @@ namespace WeatherClient.Models
         public int id { get; set; }
         public string name { get; set; }
         public int cod { get; set; }
-        public int message { get; set; }
+        public string message { get; set; }
     }
 
     public class ResponseWeather

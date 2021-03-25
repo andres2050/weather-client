@@ -1,53 +1,66 @@
 ﻿using System;
 using System.Net;
-using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WeatherClient.Models;
 using RestSharp;
-using System.Web.Http.Tracing;
-using System.Web.Http;
 
 namespace WeatherClient.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
-    public class WeatherController : ApiController
+    public class WeatherController : ControllerBase
     {
         private readonly string _openWeatherMapKey;
         private readonly RestClient _httpClient;
+        private readonly ILogger<WeatherController> _logger;
 
-        public WeatherController()
+        public WeatherController(ILogger<WeatherController> logger)
         {
+            _logger = logger;
             _openWeatherMapKey = Environment.GetEnvironmentVariable("OPEN_WEATHER_MAP_KEY");
             _httpClient = new RestClient("https://api.openweathermap.org/data/2.5");
         }
 
         [HttpGet]
-        public HttpResponseMessage GetWeather(string City)
+        public JsonResult Get()
+        {
+            return new JsonResult(new
+            {
+                message = "Hello World"
+            });
+        }
+
+        [HttpGet("[action]")]
+        public JsonResult Current(string city)
         {
             var request = new RestRequest("weather", Method.GET)
-                .AddParameter("q", City)
+                .AddParameter("q", city)
                 .AddParameter("units", "metric")
                 .AddParameter("lang", "es")
                 .AddParameter("appid", _openWeatherMapKey);
             var response = _httpClient.Execute<OpenWeatherMap>(request);
             if (response.ErrorException != null)
             {
-                Configuration.Services.GetTraceWriter().Error(Request, response.ErrorMessage, response.ErrorException);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                _logger.LogError(response.ErrorException, response.ErrorMessage);
+                Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+                return new JsonResult(new
                 {
                     message = "Internal Server Error"
                 });
             }
-
+            
             if (!response.IsSuccessful)
             {
-                return Request.CreateResponse(response.StatusCode, new
+                Response.StatusCode = (int) response.StatusCode;
+                return new JsonResult(new
                 {
                     message = response.Data.message
                 });
             }
 
-
-            return Request.CreateResponse(response.StatusCode, new ResponseWeather
+            Response.StatusCode = (int) response.StatusCode;
+            return new JsonResult(new ResponseWeather
             {
                 weather = response.Data.weather[0].description,
                 lon = response.Data.coord.lon,
