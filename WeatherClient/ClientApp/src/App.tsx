@@ -1,25 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+//import './App.css';
+import {CityInput} from "./components/CityInput";
+import {useDispatch, useSelector} from "react-redux";
+import { actionCreators, WeatherState } from "./store/weather";
 
 function App() {
+  const currentCity = useSelector<WeatherState, WeatherState["city"]>((state => state.city));
+  const weather = useSelector<WeatherState, WeatherState["weather"]>((state => state.weather));
+  const weatherHistory = useSelector<WeatherState, WeatherState["weatherHistory"]>((state => state.weatherHistory));
+  const dispatch = useDispatch()
+  
+  const onAddCity = (city: string) => {
+      actionCreators.requestWeather(city, dispatch, currentCity)
+  }
+  
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <>
+        <CityInput searchCity={onAddCity} />
+        <hr />
+        <h2>{weather.name}</h2>
+        <h2>{weather.temp}</h2>
+      </>
   );
 }
 
