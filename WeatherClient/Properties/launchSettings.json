@@ -12,8 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "OPEN_WEATHER_MAP_KEY": "a786288bb5cd8bf259d5e3d05ba5b766"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "WeatherClient": {
@@ -21,8 +20,7 @@
       "launchBrowser": true,
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "OPEN_WEATHER_MAP_KEY": "a786288bb5cd8bf259d5e3d05ba5b766"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }
